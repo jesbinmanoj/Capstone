@@ -9,6 +9,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenParam = params.get('auth_token');
+    const userParam = params.get('auth_user');
+    if (tokenParam && userParam) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(userParam));
+        localStorage.setItem('tasktrack_token', tokenParam);
+        localStorage.setItem('tasktrack_user', JSON.stringify(parsed));
+        setToken(tokenParam);
+        setUser(parsed);
+        setLoading(false);
+        return;
+      } catch (e) {}
+    }
+
     const savedUser = localStorage.getItem('tasktrack_user');
     if (savedUser && token) {
       try {
